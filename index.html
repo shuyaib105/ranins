@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranins | Premium Cotton Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --font-en: 'Montserrat', sans-serif;
+        }
+        body { font-family: var(--font-en); background-color: #ffffff; overflow-x: hidden; }
+
+        /* Tab Styles - Pill Design */
+        .tab-btn {
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: 2px solid #e5e7eb;
+            background: transparent;
+            color: #374151;
+            user-select: none;
+        }
+        .tab-btn:hover {
+            border-color: #000;
+            color: #000;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .tab-btn.active {
+            background: #000;
+            border-color: #000;
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Tab Styles - Small Version (3 in one line) */
+        .tab-btn-small {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 9px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: 2px solid #e5e7eb;
+            background: transparent;
+            color: #374151;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .tab-btn-small:hover {
+            border-color: #000;
+            color: #000;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .tab-btn-small.active {
+            background: #000;
+            border-color: #000;
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Coming Soon Badge */
+        .coming-soon-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 7px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 2px 6px;
+            border: 1.5px solid #dc2626;
+            border-radius: 20px;
+            white-space: nowrap;
+            z-index: 10;
+            animation: pulse-border 2s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { border-color: #dc2626; transform: scale(1); }
+            50% { border-color: #fca5a5; transform: scale(1.05); }
+        }
+
+        /* Rounded & Premium UI */
+        .product-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid #f3f4f6;
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            background: #fff;
+        }
+        .product-card:hover { border-color: #000; transform: translateY(-8px); box-shadow: 0 20px 30px rgba(0,0,0,0.05); }
+
+        .img-container { border-radius: 18px; overflow: hidden; margin: 10px; background: #f9f9f9; }
+
+        .badge-new {
+            position: absolute; top: 20px; left: 20px; background: #000; color: #fff;
+            font-size: 8px; padding: 5px 12px; font-weight: 900; border-radius: 50px;
+            letter-spacing: 1.5px; z-index: 10;
+        }
+
+        .badge-discount {
+            position: absolute; top: 20px; right: 20px; background: #ef4444; color: #fff;
+            font-size: 8px; padding: 5px 12px; font-weight: 900; border-radius: 50px;
+            letter-spacing: 1.5px; z-index: 10;
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: #9ca3af;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .sale-price {
+            color: #ef4444;
+        }
+
+        .btn-round { border-radius: 50px; transition: 0.3s; letter-spacing: 1px; }
+        .btn-black { background-color: #000; color: #fff; border: 1.5px solid #000; }
+        .btn-black:hover { background-color: #333; transform: scale(1.03); }
+        .btn-outline { border: 1.5px solid #000; background: transparent; color: #000; }
+        .btn-outline:hover { background: #f3f3f3; }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: #fff;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 900;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.35);
+        }
+        .btn-whatsapp:hover {
+            background: #20bd5a;
+            transform: scale(1.03);
+            box-shadow: 0 12px 30px rgba(37, 211, 102, 0.45);
+        }
+        .btn-whatsapp:active {
+            transform: scale(0.98);
+        }
+
+        /* Sidebar Style */
+        #sidebar {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+        }
+        .sidebar-overlay {
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+        .sidebar-active .sidebar-overlay {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .hidden { display: none; }
+
+        /* Loading Spinner */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #000;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 40px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Image Modal */
+        #imageModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        #imageModal.active {
+            display: flex;
+        }
+        #imageModal img {
+            max-width: 90%;
+            max-height: 85%;
+            object-fit: contain;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        #closeModal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #fff;
+            color: #000;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        #closeModal:hover {
+            background: #f3f3f3;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="text-gray-900">
+
+    <!-- Sidebar Menu -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/20 opacity-0 z-[90] sidebar-overlay"></div>
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-white shadow-2xl -translate-x-full z-[100] p-6 flex flex-col">
+        <div class="flex justify-between items-center mb-10">
+            <h2 class="text-xl font-black italic">MENU</h2>
+            <button id="closeSidebar" class="p-2 bg-gray-100 rounded-full">✕</button>
+        </div>
+
+        <nav class="space-y-2 flex-grow">
+            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Categories</p>
+            <button class="cat-link w-full text-left py-3 px-4 rounded-xl font-bold hover:bg-black hover:text-white transition" data-cat="all">All Collection</button>
+            <button class="cat-link w-full text-left py-3 px-4 rounded-xl font-bold hover:bg-black hover:text-white transition" data-cat="islamic">Islamic Content</button>
+            <button class="cat-link w-full text-left py-3 px-4 rounded-xl font-bold hover:bg-black hover:text-white transition" data-cat="motivational">Motivational Content</button>
+            <button class="cat-link w-full text-left py-3 px-4 rounded-xl font-bold hover:bg-black hover:text-white transition" data-cat="classical">Classical Content</button>
+            <button class="cat-link w-full text-left py-3 px-4 rounded-xl font-bold hover:bg-black hover:text-white transition" data-cat="musicband">Music Band Content</button>
+        </nav>
+
+        <div class="mt-auto pt-6 border-t border-gray-100">
+            <p class="text-xs text-gray-500 text-center">Thank you for being with us.</p>
+        </div>
+    </aside>
+
+    <!-- Header Section -->
+    <header class="bg-white/90 backdrop-blur-lg border-b sticky top-0 z-50">
+        <div class="container mx-auto px-4 pt-4 flex justify-between items-center pb-4">
+            <button id="menuBtn" class="p-2 bg-gray-50 rounded-full hover:bg-gray-100 transition shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+
+            <div class="flex items-center gap-2 ml-4">
+                <img src="https://raw.githubusercontent.com/shuyaib105/ranins-/refs/heads/main/Ranins%20logo%20file.png" alt="Ranins Logo" class="h-12 w-auto object-contain">
+            </div>
+
+            <div class="flex gap-2 items-center">
+                <button id="filterToggle" class="p-2 bg-gray-50 rounded-full hover:bg-gray-100 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+                <button id="cartTabBtn" class="relative p-2.5 bg-black text-white rounded-full hover:bg-gray-800 transition shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    <span id="cartCount" class="absolute -top-1 -right-1 bg-white text-black text-[9px] w-5 h-5 rounded-full flex items-center justify-center font-bold border-2 border-black">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter Overlay -->
+        <div id="filterSection" class="hidden bg-white border-t p-6 rounded-b-[40px] shadow-2xl">
+            <div class="container mx-auto max-w-lg space-y-4">
+                <input type="text" id="searchBox" placeholder="Search products by name..." class="w-full border border-gray-100 rounded-full px-6 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/5 bg-gray-50">
+                
+                <!-- Data Source Toggle -->
+                <div class="flex items-center justify-center gap-3 pt-2">
+                    <span class="text-[10px] font-black text-gray-500 uppercase tracking-wider">All Products</span>
+                    <button id="dataSourceToggle" class="relative w-14 h-7 bg-gray-200 rounded-full transition-colors duration-300">
+                        <span class="absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow-md transition-transform duration-300"></span>
+                    </button>
+                    <span class="text-[10px] font-black text-black uppercase tracking-wider">New Drop</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="shopView" class="container mx-auto px-4 py-8">
+        <!-- Brand Description -->
+        <section class="max-w-2xl mx-auto text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-black mb-4 tracking-tight">Welcome to Ranins!</h2>
+            <p class="text-gray-500 text-sm leading-relaxed px-4">
+                Looking for high-quality, 100% cotton t-shirts that are budget-friendly? We've got you covered! We aim to bring stylish and comfortable t-shirts to everyone, without breaking the bank. Premium quality, affordable prices. Shop now and express yourself!
+            </p>
+        </section>
+
+        <!-- Hero Image (Moved Above) -->
+        <section class="max-w-4xl mx-auto mb-12 px-4">
+            <img src="https://raw.githubusercontent.com/shuyaib105/ranins-/refs/heads/main/20%25%20off%20.webp" alt="20% Off Sale" class="w-full h-auto object-cover rounded-3xl shadow-lg">
+        </section>
+
+        <!-- Tab Buttons (Below Hero Image - 3 Buttons in One Line) -->
+        <section class="max-w-2xl mx-auto mb-8 px-4">
+            <div class="flex gap-2 justify-center items-center">
+                <button id="shopTabBtn" class="tab-btn-small active">New Drop</button>
+                <div class="relative">
+                    <button id="categoriesBtn" class="tab-btn-small">Categories</button>
+                    <div id="categoriesDropdown" class="hidden absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-white border border-gray-200 rounded-2xl shadow-2xl py-2 min-w-[240px] z-50 overflow-hidden">
+                        <button class="cat-dropdown-item w-full text-left px-5 py-3.5 hover:bg-black hover:text-white transition font-bold text-[13px] text-gray-700" data-cat="all">All Collection</button>
+                        <button class="cat-dropdown-item w-full text-left px-5 py-3.5 hover:bg-black hover:text-white transition font-bold text-[13px] text-gray-700" data-cat="islamic">Islamic Content</button>
+                        <button class="cat-dropdown-item w-full text-left px-5 py-3.5 hover:bg-black hover:text-white transition font-bold text-[13px] text-gray-700" data-cat="motivational">Motivational Content</button>
+                        <button class="cat-dropdown-item w-full text-left px-5 py-3.5 hover:bg-black hover:text-white transition font-bold text-[13px] text-gray-700" data-cat="classical">Classical Content</button>
+                        <button class="cat-dropdown-item w-full text-left px-5 py-3.5 hover:bg-black hover:text-white transition font-bold text-[13px] text-gray-700" data-cat="musicband">Music Band Content</button>
+                    </div>
+                </div>
+                <div class="relative">
+                    <button id="customizeBtn" class="tab-btn-small opacity-60 cursor-not-allowed">Customize T-Shirt</button>
+                    <span class="coming-soon-badge">Coming Soon</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Shop Grid -->
+        <h2 id="viewTitle" class="text-xl font-bold mb-8 border-l-8 border-black pl-4">Exclusive Collection</h2>
+        <div id="loadingIndicator" class="loader"></div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8" id="productGrid">
+            <!-- Products injected here -->
+        </div>
+    </main>
+
+    <!-- Cart View -->
+    <main id="cartView" class="container mx-auto px-4 py-10 hidden max-w-2xl min-h-screen">
+        <div class="flex items-center gap-6 mb-12">
+            <button id="backToShop" class="p-3 bg-gray-50 hover:bg-gray-100 rounded-full transition shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+            </button>
+            <h2 class="text-3xl font-black">Your Cart</h2>
+        </div>
+
+        <div id="cartContent" class="space-y-4">
+            <!-- Cart Items -->
+        </div>
+
+        <div id="cartFooter" class="mt-16 border-t border-gray-100 pt-10 hidden">
+            <div class="flex justify-between items-center mb-10 px-4">
+                <span class="uppercase text-[11px] font-black tracking-[5px] text-gray-300">Total Bill</span>
+                <span id="totalAmount" class="text-4xl font-black">৳ 0</span>
+            </div>
+            <button id="waOrderBtn" class="w-full btn-whatsapp btn-round py-6 shadow-2xl active:scale-95 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-6 h-6 fill-current">
+                    <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.8-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.5 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7 .9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
+                </svg>
+                Complete Order on WhatsApp
+            </button>
+        </div>
+
+        <div id="emptyCart" class="text-center py-40">
+            <p class="text-xl text-gray-300 italic">Your cart is currently empty...</p>
+        </div>
+    </main>
+
+    <!-- Image Modal -->
+    <div id="imageModal">
+        <button id="closeModal">✕</button>
+        <img id="modalImage" src="" alt="Product Image">
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-900 text-white py-12 mt-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <!-- Logo & Brand -->
+                <div class="flex items-center justify-center gap-3 mb-6">
+                    <img src="https://raw.githubusercontent.com/shuyaib105/ranins-/refs/heads/main/Ranins%20logo%20file.png" alt="Ranins" class="h-20 w-auto object-contain filter invert">
+                </div>
+
+                <!-- Social Links -->
+                <div class="flex justify-center gap-4 mb-8">
+                    <!-- Facebook -->
+                    <a href="https://www.facebook.com/profile.php?id=61575292375203&mibextid=rS40aB7S9Ucbxw6v" target="_blank" rel="noopener noreferrer"
+                       class="flex items-center justify-center w-12 h-12 bg-blue-600 hover:bg-blue-700 rounded-full transition-all duration-300 hover:scale-105 shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                    </a>
+
+                    <!-- Instagram -->
+                    <a href="https://www.instagram.com/ranin_s_111111" target="_blank" rel="noopener noreferrer"
+                       class="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 hover:from-purple-700 hover:via-pink-700 hover:to-orange-600 rounded-full transition-all duration-300 hover:scale-105 shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 448 512">
+                            <path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-190.8c0 14.7-12 26.7-26.7 26.7-14.7 0-26.7-12-26.7-26.7s12-26.7 26.7-26.7 26.7 12 26.7 26.7zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM390.6 367.4c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-123.9 9-24.4 0-94.4 2.6-123.9-9-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-123.9s-2.6-94.4 9-123.9c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 123.9-9 24.4 0 94.4-2.6 123.9 9 19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 123.9s2.7 94.4-9 123.9z"/>
+                        </svg>
+                    </a>
+
+                    <!-- WhatsApp -->
+                    <a href="https://wa.me/8801918318094" target="_blank" rel="noopener noreferrer"
+                       class="flex items-center justify-center w-12 h-12 bg-green-500 hover:bg-green-600 rounded-full transition-all duration-300 hover:scale-105 shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 448 512">
+                            <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.8-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.5 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7 .9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- Copyright -->
+                <div class="border-t border-gray-700 pt-8">
+                    <p class="text-gray-400 text-sm">
+                        &copy; 2026 <span class="font-black italic">Ranins</span>. All rights reserved.
+                    </p>
+                    <p class="text-gray-500 text-xs mt-2">
+                        Premium Quality • Affordable Prices
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let products = [];
+        let cart = [];
+        let currentFilter = 'all';
+        let isNewOnly = false;
+        let useNewJson = false; // Toggle to use new.json instead of product.json
+        const waNumber = "8801918318094";
+
+        // Category name mapping
+        const catNames = {
+            'all': 'All Collection',
+            'islamic': 'Islamic Content',
+            'motivational': 'Motivational Content',
+            'classical': 'Classical Content',
+            'musicband': 'Music Band Content'
+        };
+
+        // Fetch products from product.json or new.json
+        async function loadProducts() {
+            try {
+                const file = useNewJson ? 'new.json' : 'product.json';
+                const response = await fetch(file);
+                if (!response.ok) throw new Error('Failed to load products');
+                products = await response.json();
+                document.getElementById('loadingIndicator').style.display = 'none';
+                renderProducts();
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('loadingIndicator').style.display = 'none';
+                document.getElementById('productGrid').innerHTML = '<p class="col-span-full text-center text-red-500 font-bold">Failed to load products. Please try again.</p>';
+            }
+        }
+
+        // Sidebar Logic
+        const menuBtn = document.getElementById('menuBtn');
+        const closeSidebar = document.getElementById('closeSidebar');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        menuBtn.onclick = () => {
+            sidebar.classList.remove('-translate-x-full');
+            document.body.classList.add('sidebar-active');
+        };
+
+        const hideSidebar = () => {
+            sidebar.classList.add('-translate-x-full');
+            document.body.classList.remove('sidebar-active');
+        };
+
+        closeSidebar.onclick = hideSidebar;
+        sidebarOverlay.onclick = hideSidebar;
+
+        // Render Function
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            const search = document.getElementById('searchBox').value.toLowerCase();
+            grid.innerHTML = '';
+
+            const filtered = products.filter(p => {
+                const matchCat = currentFilter === 'all' || p.cat === currentFilter;
+                const matchNew = !isNewOnly || p.isNew;
+                const matchSearch = p.name.toLowerCase().includes(search);
+                return matchCat && matchNew && matchSearch;
+            });
+
+            filtered.forEach(p => {
+                // Show category tag only when "All" category is selected
+                const categoryTag = currentFilter === 'all' ? `
+                    <div class="px-3 pb-2">
+                        <span class="inline-block bg-gray-100 text-gray-600 text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider">
+                            ${catNames[p.cat] || p.cat}
+                        </span>
+                    </div>
+                ` : '';
+
+                grid.innerHTML += `
+                    <div class="product-card">
+                        ${p.isNew ? '<span class="badge-new">NEW DROP</span>' : ''}
+                        <div class="img-container aspect-[4/5] cursor-pointer" onclick="openImageModal('${p.img}')">
+                            <img src="${p.img}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-5 pt-2">
+                            <p class="text-[9px] text-gray-300 font-black tracking-widest mb-1 uppercase">SKU: ${p.id}</p>
+                            <h3 class="text-sm font-bold truncate mb-2">${p.name}</h3>
+                            ${categoryTag}
+                            <div class="flex items-center gap-2 mb-1 mt-2">
+                                <span class="original-price">৳ ${p.originalPrice}</span>
+                                <span class="text-sm font-black sale-price">৳ ${p.price}</span>
+                            </div>
+                            <p class="text-[9px] text-red-500 font-bold mb-4">20% OFF</p>
+                            <div class="flex flex-col gap-3">
+                                <button onclick="addToCart('${p.id}')" class="w-full btn-black btn-round py-2.5 text-[10px] font-black uppercase tracking-widest shadow-lg">Add to Bag</button>
+                                <button onclick="quickBuy('${p.id}')" class="w-full btn-outline btn-round py-2.5 text-[10px] font-black uppercase tracking-widest">Quick Buy</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Navigation
+        function setActiveTab(id) {
+            document.querySelectorAll('.tab-btn-small').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        document.getElementById('shopTabBtn').onclick = () => {
+            isNewOnly = false;
+            currentFilter = 'all';
+            setActiveTab('shopTabBtn');
+            renderProducts();
+        };
+
+        // Customize T-Shirt Button (Disabled - Coming Soon)
+        document.getElementById('customizeBtn').onclick = (e) => {
+            e.preventDefault();
+            showToast("🚧 Coming Soon! Stay tuned...");
+        };
+
+        // Categories Dropdown
+        const categoriesBtn = document.getElementById('categoriesBtn');
+        const categoriesDropdown = document.getElementById('categoriesDropdown');
+
+        categoriesBtn.onclick = (e) => {
+            e.stopPropagation();
+            categoriesDropdown.classList.toggle('hidden');
+            categoriesBtn.classList.toggle('active');
+        };
+
+        document.querySelectorAll('.cat-dropdown-item').forEach(item => {
+            item.onclick = () => {
+                currentFilter = item.dataset.cat;
+                isNewOnly = false;
+                categoriesBtn.classList.remove('active');
+                
+                // Make sure shopTabBtn is active
+                document.querySelectorAll('.tab-btn-small').forEach(btn => btn.classList.remove('active'));
+                document.getElementById('shopTabBtn').classList.add('active');
+
+                const titleMap = {
+                    'all': 'Exclusive Collection',
+                    'islamic': 'Islamic Content',
+                    'motivational': 'Motivational Content',
+                    'classical': 'Classical Content',
+                    'musicband': 'Music Band Content'
+                };
+                document.getElementById('viewTitle').innerText = titleMap[currentFilter] || 'Collection';
+
+                categoriesDropdown.classList.add('hidden');
+                renderProducts();
+            };
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            categoriesDropdown.classList.add('hidden');
+            categoriesBtn.classList.remove('active');
+        });
+
+        function switchView(view) {
+            window.scrollTo(0,0);
+            if(view === 'shop') {
+                document.getElementById('shopView').classList.remove('hidden');
+                document.getElementById('cartView').classList.add('hidden');
+            } else {
+                document.getElementById('shopView').classList.add('hidden');
+                document.getElementById('cartView').classList.remove('hidden');
+                renderCart();
+            }
+        }
+
+        // Cart logic
+        window.addToCart = (id) => {
+            const p = products.find(i => i.id === id);
+            const exist = cart.find(i => i.id === id);
+            if(exist) exist.qty++;
+            else cart.push({...p, qty: 1});
+            updateCartCount();
+            showToast("Added to bag");
+        };
+
+        function updateCartCount() {
+            document.getElementById('cartCount').innerText = cart.reduce((a, b) => a + b.qty, 0);
+        }
+
+        function renderCart() {
+            const content = document.getElementById('cartContent');
+            const footer = document.getElementById('cartFooter');
+            const empty = document.getElementById('emptyCart');
+
+            if(cart.length === 0) {
+                content.innerHTML = '';
+                footer.classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            footer.classList.remove('hidden');
+            content.innerHTML = '';
+
+            let total = 0;
+            cart.forEach(item => {
+                total += item.price * item.qty;
+                content.innerHTML += `
+                    <div class="flex items-center gap-6 bg-white p-6 rounded-[32px] border border-gray-50 shadow-sm">
+                        <img src="${item.img}" class="w-20 h-24 object-cover rounded-[20px]">
+                        <div class="flex-grow">
+                            <p class="text-[9px] font-black text-gray-400">#${item.id}</p>
+                            <h4 class="text-md font-bold text-black">${item.name}</h4>
+                            <div class="flex items-center gap-6 mt-3">
+                                <span class="text-sm font-black">৳ ${item.price}</span>
+                                <div class="flex items-center bg-gray-50 rounded-full px-2 py-1">
+                                    <button onclick="changeQty('${item.id}', -1)" class="w-8 h-8 flex items-center justify-center font-bold">-</button>
+                                    <span class="px-4 text-[12px] font-black">${item.qty}</span>
+                                    <button onclick="changeQty('${item.id}', 1)" class="w-8 h-8 flex items-center justify-center font-bold">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart('${item.id}')" class="text-gray-200 hover:text-red-500 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                    </div>
+                `;
+            });
+            document.getElementById('totalAmount').innerText = `৳ ${total}`;
+        }
+
+        window.changeQty = (id, delta) => {
+            const item = cart.find(i => i.id === id);
+            if(item) {
+                item.qty += delta;
+                if(item.qty < 1) removeFromCart(id);
+                else { updateCartCount(); renderCart(); }
+            }
+        };
+
+        window.removeFromCart = (id) => {
+            cart = cart.filter(i => i.id !== id);
+            renderCart();
+            updateCartCount();
+        };
+
+        window.quickBuy = (id) => {
+            const p = products.find(i => i.id === id);
+            const cat = catNames[p.cat] || p.cat;
+            const msg = `Hi! I want to know more about this product:\n\n🆔 ID: ${p.id}\n🛍️ Product: ${p.name}\n📂 Category: ${cat}\n💰 Price: ৳ ${p.price}`;
+            window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+        };
+
+        document.getElementById('waOrderBtn').onclick = () => {
+            let list = cart.map(i => `• [${i.id}] ${i.name} — ${catNames[i.cat] || i.cat} — ${i.qty} pcs`).join('\n');
+            let total = cart.reduce((a, b) => a + (b.price * b.qty), 0);
+            const msg = `Order List:\n\n${list}\n\n💵 Total Bill: ৳ ${total}\n\nPlease confirm my order.`;
+            window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+        };
+
+        // Event Listeners
+        document.getElementById('filterToggle').onclick = () => document.getElementById('filterSection').classList.toggle('hidden');
+        document.getElementById('cartTabBtn').onclick = () => switchView('cart');
+        document.getElementById('backToShop').onclick = () => switchView('shop');
+        document.getElementById('searchBox').oninput = renderProducts;
+
+        document.querySelectorAll('.cat-link').forEach(btn => {
+            btn.onclick = () => {
+                currentFilter = btn.dataset.cat;
+                document.getElementById('viewTitle').innerText = btn.innerText.split(' ')[0] + " Collection";
+                hideSidebar();
+                renderProducts();
+            };
+        });
+
+        // Data Source Toggle Logic
+        const dataSourceBtn = document.getElementById('dataSourceToggle');
+        const toggleKnob = dataSourceBtn.querySelector('span');
+
+        dataSourceBtn.onclick = () => {
+            useNewJson = !useNewJson;
+            
+            // Update toggle UI
+            if (useNewJson) {
+                dataSourceBtn.classList.remove('bg-gray-200');
+                dataSourceBtn.classList.add('bg-black');
+                toggleKnob.style.transform = 'translateX(28px)';
+            } else {
+                dataSourceBtn.classList.remove('bg-black');
+                dataSourceBtn.classList.add('bg-gray-200');
+                toggleKnob.style.transform = 'translateX(0)';
+            }
+
+            // Reload products
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('productGrid').innerHTML = '';
+            loadProducts();
+        };
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = "fixed bottom-12 left-1/2 -translate-x-1/2 bg-black text-white px-8 py-4 rounded-full text-xs font-bold z-[100] shadow-2xl animate-pulse";
+            toast.innerText = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
+        // Load products on page load
+        loadProducts();
+
+        // Image Modal Logic
+        function openImageModal(imgSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modalImg.src = imgSrc;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('closeModal').onclick = (e) => {
+            e.stopPropagation();
+            closeImageModal();
+        };
+
+        document.getElementById('imageModal').onclick = (e) => {
+            if (e.target.id === 'imageModal') {
+                closeImageModal();
+            }
+        };
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeImageModal();
+            }
+        });
+    </script>
+</body>
+</html>
