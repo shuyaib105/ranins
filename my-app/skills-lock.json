@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "skills": {
+    "date-fns": {
+      "source": "livealvi/rdz",
+      "sourceType": "github",
+      "computedHash": "3983ff0197a051950e50129a89ce09d4a3b9d9b69486ca08141184136fb038d9"
+    },
+    "design-everyday-things": {
+      "source": "livealvi/rdz",
+      "sourceType": "github",
+      "computedHash": "a06d68c81c7bc007e7bcd14ec85c33898466d447706027e1f45e98fe6070a658"
+    },
+    "next-best-practices": {
+      "source": "livealvi/rdz",
+      "sourceType": "github",
+      "computedHash": "a13daee02a38a16d8b12e7676eb965e4e99f63037745468d5bb0f8a3963554eb"
+    },
+    "react:components": {
+      "source": "livealvi/rdz",
+      "sourceType": "github",
+      "computedHash": "09045d6794572ae8d7632e84ef76bd1bc53f657a8e40b36a5c4bfbbb463fb12d"
+    },
+    "shadcn": {
+      "source": "livealvi/rdz",
+      "sourceType": "github",
+      "computedHash": "2fb8ae8fdd7da28ab49cc7683170478ce438e035c623dce1ad07e52c374748dc"
+    },
+    "supabase-postgres-best-practices": {
+      "source": "livealvi/rdz",
+      "sourceType": "github",
+      "computedHash": "983d2f04d53bf250c5fcc4941002cdf525c5ff270da0795d92d3ac912a69cc1b"
+    },
+    "tailwind-design-system": {
+      "source": "livealvi/rdz",
+      "sourceType": "github",
+      "computedHash": "44e18a4d4d275938e7a09d59db0b36cfe137f28d15c51ec12be043bb759a0d56"
+    },
+    "tailwind-theme-builder": {
+      "source": "livealvi/rdz",
+      "sourceType": "github",
+      "computedHash": "dc779a2f24a50decf85e8963e5fd385a494aa34ef038cf935cfa9b1e32620662"
+    },
+    "tailwindcss-advanced-layouts": {
+      "source": "livealvi/rdz",
+      "sourceType": "github",
+      "computedHash": "5d8f761a3e4b4a07c2d3ac06db59e7254ce6e86334f94189fe821fbfa9601225"
+    },
+    "tailwindcss-mobile-first": {
+      "source": "livealvi/rdz",
+      "sourceType": "github",
+      "computedHash": "f8174188008bc716c7dd784852382e17627beb7a09928024131f1a58decf2080"
+    },
+    "tanstack-query-best-practices": {
+      "source": "livealvi/rdz",
+      "sourceType": "github",
+      "computedHash": "5d312634362e20c89a3ba81d2545d06e7e81f4ce5ac6173134bc5881d80575f7"
+    },
+    "vercel-react-best-practices": {
+      "source": "livealvi/rdz",
+      "sourceType": "github",
+      "computedHash": "a52254c03b345d404aebd68dd92715aa7098de6a4269721e3d498f10d3b44cc6"
+    },
+    "web-design-guidelines": {
+      "source": "livealvi/rdz",
+      "sourceType": "github",
+      "computedHash": "d4e26ec49c7cb5c7578292d88a359d6550f2d6f747d2d4f483e3a86fd701feab"
+    }
+  }
+}
