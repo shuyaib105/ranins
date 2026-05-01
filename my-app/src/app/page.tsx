@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Product, Category } from "@/types/product";
+import { ProductDocument } from "@/lib/queries/product.query";
 import { Navbar } from "@/components/navbar";
 import { Hero } from "@/components/hero";
 import { ProductCard } from "@/components/product-card";
@@ -19,6 +20,8 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import Image from "next/image";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import { useProducts } from "@/lib/queries/product.query";
+import { useSettings } from "@/lib/queries/settings.query";
 
 const catNames: Record<string, string> = {
   all: "Exclusive Collection",
@@ -29,36 +32,33 @@ const catNames: Record<string, string> = {
 };
 
 export default function Home() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: appwriteProducts, isLoading: loading } = useProducts();
+  const { data: settings } = useSettings();
   const [currentView, setCurrentView] = useState<"shop" | "cart">("shop");
   const [currentFilter, setCurrentFilter] = useState<Category>("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [useNewJson, setUseNewJson] = useState(false);
   const [selectedImg, setSelectedImg] = useState<string | null>(null);
 
   const { cart, addToCart, removeFromCart, updateQty, cartCount, totalAmount } =
     useCart();
 
+  const [mounted, setMounted] = useState(false);
   useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const file = useNewJson ? "/new.json" : "/product.json";
-        const response = await fetch(file);
-        if (!response.ok) throw new Error("Failed to fetch");
-        const data = await response.json();
-        setProducts(data);
-      } catch (error) {
-        console.error("Error loading products:", error);
-        toast.error("Failed to load products");
-      } finally {
-        setLoading(false);
-      }
-    };
+    const id = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(id);
+  }, []);
 
-    fetchProducts();
-  }, [useNewJson]);
+  const [now] = useState(() => Date.now());
+
+  const products: Product[] = (appwriteProducts || []).map((p: ProductDocument) => ({
+    id: p.$id!,
+    name: p.name,
+    originalPrice: p.discountPrice ? p.price : 0,
+    price: p.discountPrice || p.price,
+    cat: (p.category as Category) || "all",
+    isNew: mounted ? (p.$createdAt ? new Date(p.$createdAt).getTime() > now - 7 * 24 * 60 * 60 * 1000 : false) : false,
+    img: p.image ?? "",
+  })) || [];
 
   const filteredProducts = products.filter((p) => {
     const matchCat = currentFilter === "all" || p.cat === currentFilter;
@@ -67,10 +67,10 @@ export default function Home() {
   });
 
   const handleQuickBuy = (product: Product) => {
-    const cat = catNames[product.cat] || product.cat;
-    const msg = `Hi! I want to know more about this product:\n\n🆔 ID: ${product.id}\n🛍️ Product: ${product.name}\n📂 Category: ${cat}\n💰 Price: ৳ ${product.price}`;
+    const waNumber = settings?.whatsappNumber || "8801918318094";
+    const msg = `Hi! I want to know more about this product:\n\n🛍️ Product: ${product.name}\n💰 Price: ৳ ${product.price}`;
     window.open(
-      `https://wa.me/8801918318094?text=${encodeURIComponent(msg)}`,
+      `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`,
       "_blank"
     );
   };
@@ -100,8 +100,6 @@ export default function Home() {
       <Navbar
         cartCount={cartCount}
         onSearch={setSearchQuery}
-        useNewJson={useNewJson}
-        onToggleSource={setUseNewJson}
         onCategorySelect={(cat) => {
           setCurrentFilter(cat);
           window.scrollTo({ top: 0, behavior: "smooth" });
@@ -179,6 +177,7 @@ export default function Home() {
         <h2 className="mb-8 border-l-8 border-black pl-4 text-xl font-bold">
           {catNames[currentFilter] || "Collection"}
         </h2>
+
 
         {loading ? (
           <div className="flex justify-center py-20">

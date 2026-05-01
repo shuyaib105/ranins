@@ -18,8 +18,6 @@ import { Category } from "@/types/product";
 interface NavbarProps {
   cartCount: number;
   onSearch: (value: string) => void;
-  useNewJson: boolean;
-  onToggleSource: (value: boolean) => void;
   onCategorySelect: (cat: Category) => void;
   onCartClick: () => void;
 }
@@ -27,15 +25,13 @@ interface NavbarProps {
 export function Navbar({
   cartCount,
   onSearch,
-  useNewJson,
-  onToggleSource,
   onCategorySelect,
   onCartClick,
 }: NavbarProps) {
   const [showFilters, setShowFilters] = useState(false);
 
   const categories: { id: Category; name: string }[] = [
-    { id: "all", name: "All Collection" },
+    { id: "all", name: "Exclusive Collection" },
     { id: "islamic", name: "Islamic Content" },
     { id: "motivational", name: "Motivational Content" },
     { id: "classical", name: "Classical Content" },
@@ -116,19 +112,6 @@ export function Navbar({
               className="h-12 w-full rounded-full border-gray-100 bg-gray-50 px-6 py-3.5 text-sm focus-visible:ring-black/5"
               onChange={(e) => onSearch(e.target.value)}
             />
-            <div className="flex items-center justify-center gap-3 pt-2">
-              <span className={`text-[10px] font-black uppercase tracking-wider ${!useNewJson ? 'text-black' : 'text-gray-500'}`}>
-                All Products
-              </span>
-              <Switch
-                checked={useNewJson}
-                onCheckedChange={onToggleSource}
-                className="data-[state=checked]:bg-black"
-              />
-              <span className={`text-[10px] font-black uppercase tracking-wider ${useNewJson ? 'text-black' : 'text-gray-500'}`}>
-                New Drop
-              </span>
-            </div>
           </div>
         </div>
       )}
