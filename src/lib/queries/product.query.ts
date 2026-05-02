@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { productApi, ProductDocument } from "@/lib/api/product";
 import { queryKeys } from "./query-keys";
+import { createProductAction, updateProductAction, deleteProductAction } from "@/app/actions/product";
 
 export type { ProductDocument };
 
@@ -21,7 +22,16 @@ export function useAdminMutations() {
 
   const createProduct = useMutation({
     mutationFn: async (data: NewProduct) => {
-      return await productApi.create(data);
+      const result = await createProductAction({
+        name: data.name,
+        price: data.price,
+        discount_price: data.discountPrice || null,
+        stock: data.stock,
+        category: data.category,
+        image: data.image || null,
+      });
+      if (result.error) throw new Error(result.error);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
@@ -36,7 +46,18 @@ export function useAdminMutations() {
       id: string;
       data: Partial<NewProduct>;
     }) => {
-      return await productApi.update(id, data);
+      const payload: Partial<NewProduct> & { discount_price?: number | null } = {};
+      if (data.name !== undefined) payload.name = data.name;
+      if (data.price !== undefined) payload.price = data.price;
+      if (data.discountPrice !== undefined) payload.discount_price = data.discountPrice;
+      if (data.stock !== undefined) payload.stock = data.stock;
+      if (data.category !== undefined) payload.category = data.category;
+      if (data.image !== undefined) payload.image = data.image;
+
+      const result = await updateProductAction(id, payload);
+
+      if (result.error) throw new Error(result.error);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
@@ -45,7 +66,9 @@ export function useAdminMutations() {
 
   const deleteProduct = useMutation({
     mutationFn: async (id: string) => {
-      return await productApi.delete(id);
+      const result = await deleteProductAction(id);
+      if (result.error) throw new Error(result.error);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
@@ -54,3 +77,4 @@ export function useAdminMutations() {
 
   return { createProduct, updateProduct, deleteProduct };
 }
+

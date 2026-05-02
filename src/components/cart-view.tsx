@@ -2,13 +2,12 @@
 
 import { ChevronLeft, Trash2, Plus, Minus, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Empty,
-  EmptyDescription,
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty";
+
 import { CartItem } from "@/types/product";
 import Image from "next/image";
 import { useState } from "react";

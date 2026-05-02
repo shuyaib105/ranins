@@ -1,4 +1,4 @@
-export type Category = 'all' | 'islamic' | 'motivational' | 'classical' | 'musicband';
+export type Category = string;
 
 export interface Product {
   id: string | number;

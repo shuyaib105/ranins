@@ -52,9 +52,10 @@ export function CheckoutForm({ cart, totalAmount, onSuccess }: CheckoutFormProps
       });
       toast.success("Order placed successfully! We will verify it soon.");
       onSuccess();
-    } catch (err: unknown) {
+    } catch (_err: unknown) {
       toast.error("Failed to place order. Please try again.");
     } finally {
+
       setLoading(false);
     }
   };

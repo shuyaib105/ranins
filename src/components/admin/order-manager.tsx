@@ -17,10 +17,11 @@ export function OrderManager() {
     try {
       await updateStatus.mutateAsync({ id, status: "verified" });
       toast.success("Order verified");
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to verify order");
     }
   };
+
 
   if (isLoading) {
     return (

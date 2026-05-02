@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { createClient } from "@/lib/client";
-import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { login } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
@@ -10,26 +9,17 @@ import { toast } from "sonner";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const { error } = await createClient().auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      toast.success("Login successful");
-      router.push("/admin");
-    } catch (err: unknown) {
-      const error = err as { message?: string };
-      console.error(error);
-      toast.error(error.message || "Failed to login");
-    } finally {
-      setLoading(false);
-    }
+  const handleAction = async (formData: FormData) => {
+    startTransition(async () => {
+      const result = await login(formData);
+      if (result?.error) {
+        toast.error(result.error);
+      } else {
+        toast.success("Login successful");
+      }
+    });
   };
 
   return (
@@ -39,16 +29,15 @@ export default function LoginPage() {
           <CardTitle className="text-3xl font-black">Admin Login</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="flex flex-col gap-6">
+          <form action={handleAction} className="flex flex-col gap-6">
             <FieldGroup className="gap-6">
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="admin@ranins.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                   required
                   className="rounded-2xl"
                 />
@@ -57,10 +46,9 @@ export default function LoginPage() {
                 <FieldLabel htmlFor="password">Password</FieldLabel>
                 <Input
                   id="password"
+                  name="password"
                   type="password"
                   placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                   required
                   className="rounded-2xl"
                 />
@@ -69,10 +57,10 @@ export default function LoginPage() {
             <Button
               type="submit"
               className="w-full rounded-full py-6 text-sm font-black uppercase tracking-wider transition-all hover:scale-[1.02]"
-              disabled={loading}
+              disabled={isPending}
               size="lg"
             >
-              {loading ? "Logging in..." : "Login"}
+              {isPending ? "Logging in..." : "Login"}
             </Button>
           </form>
         </CardContent>
@@ -83,3 +71,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

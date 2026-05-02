@@ -1,14 +1,10 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { Product, Category } from "@/types/product";
-import { ProductDocument } from "@/lib/queries/product.query";
 import { Navbar } from "@/components/navbar";
 import { Hero } from "@/components/hero";
 import { ProductCard } from "@/components/product-card";
 import { CartView } from "@/components/cart-view";
 import { Footer } from "@/components/footer";
-import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
@@ -26,67 +22,30 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import Image from "next/image";
-import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import { useProducts } from "@/lib/queries/product.query";
-import { useSettings } from "@/lib/queries/settings.query";
-
-const catNames: Record<string, string> = {
-  all: "Exclusive Collection",
-  islamic: "Islamic Content",
-  motivational: "Motivational Content",
-  classical: "Classical Content",
-  musicband: "Music Band Content",
-};
+import { useHomeState } from "@/hooks/use-home-state";
 
 export default function Home() {
-  const { data: appwriteProducts, isLoading: loading } = useProducts();
-  const { data: settings } = useSettings();
-  const [currentView, setCurrentView] = useState<"shop" | "cart">("shop");
-  const [currentFilter, setCurrentFilter] = useState<Category>("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedImg, setSelectedImg] = useState<string | null>(null);
-
-  const { cart, addToCart, removeFromCart, updateQty, cartCount, totalAmount } =
-    useCart();
-
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    const id = setTimeout(() => setMounted(true), 0);
-    return () => clearTimeout(id);
-  }, []);
-
-  const [now] = useState(() => Date.now());
-
-  const products: Product[] = (appwriteProducts || []).map((p: ProductDocument) => ({
-    id: p.$id!,
-    name: p.name,
-    originalPrice: p.discountPrice ? p.price : 0,
-    price: p.discountPrice || p.price,
-    cat: (p.category as Category) || "all",
-    isNew: mounted ? (p.$createdAt ? new Date(p.$createdAt).getTime() > now - 7 * 24 * 60 * 60 * 1000 : false) : false,
-    img: p.image ?? "",
-  })) || [];
-
-  const filteredProducts = products.filter((p) => {
-    const matchCat = currentFilter === "all" || p.cat === currentFilter;
-    const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchCat && matchSearch;
-  });
-
-  const handleQuickBuy = (product: Product) => {
-    const waNumber = settings?.whatsappNumber || "8801918318094";
-    const msg = `Hi! I want to know more about this product:\n\n🛍️ Product: ${product.name}\n💰 Price: ৳ ${product.price}`;
-    window.open(
-      `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`,
-      "_blank"
-    );
-  };
-
-  const handleAddToCart = (product: Product) => {
-    addToCart(product);
-    toast.success("Added to bag");
-  };
+  const {
+    loading,
+    categories,
+    currentView,
+    setCurrentView,
+    currentFilter,
+    setCurrentFilter,
+    setSearchQuery,
+    selectedImg,
+    setSelectedImg,
+    cart,
+    cartCount,
+    totalAmount,
+    updateQty,
+    removeFromCart,
+    filteredProducts,
+    categoryName,
+    handleQuickBuy,
+    handleAddToCart,
+  } = useHomeState();
 
   if (currentView === "cart") {
     return (
@@ -156,13 +115,13 @@ export default function Home() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-60 rounded-2xl p-2 shadow-2xl">
-                {Object.entries(catNames).map(([id, name]) => (
+                {categories?.map((cat) => (
                   <DropdownMenuItem
-                    key={id}
+                    key={cat.$id}
                     className="cursor-pointer rounded-xl px-5 py-3.5 text-[13px] font-bold transition-all hover:bg-primary hover:text-primary-foreground"
-                    onClick={() => setCurrentFilter(id as Category)}
+                    onClick={() => setCurrentFilter(cat.slug)}
                   >
-                    {name}
+                    {cat.name}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -185,7 +144,7 @@ export default function Home() {
         </section>
 
         <h2 className="mb-8 border-l-8 border-primary pl-4 text-xl font-bold">
-          {catNames[currentFilter] || "Collection"}
+          {categoryName}
         </h2>
 
 
@@ -194,7 +153,7 @@ export default function Home() {
             <Spinner className="size-10" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
             {filteredProducts.map((product) => (
               <ProductCard
                 key={product.id}

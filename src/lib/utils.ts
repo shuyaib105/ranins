@@ -1,3 +1,4 @@
+import { SupabaseClient } from "@supabase/supabase-js";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -13,7 +14,7 @@ export function getPublicImageUrl(url: string | null | undefined) {
   return url;
 }
 
-export async function deleteStorageImage(supabase: any, url: string | null | undefined) {
+export async function deleteStorageImage(supabase: SupabaseClient, url: string | null | undefined) {
   if (!url || !url.includes("supabase.co")) return;
 
   try {
@@ -31,3 +32,4 @@ export async function deleteStorageImage(supabase: any, url: string | null | und
     console.error("Error in deleteStorageImage:", e);
   }
 }
+

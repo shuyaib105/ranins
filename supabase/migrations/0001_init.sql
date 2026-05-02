@@ -42,6 +42,23 @@ create table if not exists settings (
   created_at timestamptz not null default now()
 );
 
+-- Categories table
+create table if not exists categories (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,
+  slug text not null unique,
+  created_at timestamptz not null default now()
+);
+
+-- Seed initial categories
+insert into categories (name, slug) values 
+('Exclusive', 'all'),
+('Islamic', 'islamic'),
+('Motivational', 'motivational'),
+('Classical', 'classical'),
+('Music Band', 'musicband')
+on conflict (slug) do nothing;
+
 -- Ensure there's at most one settings row (optional - enforce via app logic or a trigger)
 
 -- Supabase Storage Setup

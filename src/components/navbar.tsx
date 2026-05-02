@@ -14,12 +14,14 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useState } from "react";
-import { Category } from "@/types/product";
+import { useSettings } from "@/lib/queries/settings.query";
+import { useCategories } from "@/lib/queries/category.query";
+import { getPublicImageUrl } from "@/lib/utils";
 
 interface NavbarProps {
   cartCount: number;
   onSearch: (value: string) => void;
-  onCategorySelect: (cat: Category) => void;
+  onCategorySelect: (cat: string) => void;
   onCartClick: () => void;
 }
 
@@ -30,14 +32,12 @@ export function Navbar({
   onCartClick,
 }: NavbarProps) {
   const [showFilters, setShowFilters] = useState(false);
+  const { data: settings } = useSettings();
+  const { data: categories } = useCategories();
 
-  const categories: { id: Category; name: string }[] = [
-    { id: "all", name: "Exclusive Collection" },
-    { id: "islamic", name: "Islamic Content" },
-    { id: "motivational", name: "Motivational Content" },
-    { id: "classical", name: "Classical Content" },
-    { id: "musicband", name: "Music Band Content" },
-  ];
+  const logo = settings?.logo 
+    ? getPublicImageUrl(settings.logo) 
+    : "https://raw.githubusercontent.com/shuyaib105/ranins-/refs/heads/main/Ranins%20logo%20file.png";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/90 backdrop-blur-lg safe-area-pt">
@@ -59,12 +59,12 @@ export function Navbar({
               <p className="mb-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                 Categories
               </p>
-              {categories.map((cat) => (
+              {categories?.map((cat) => (
                 <Button
-                  key={cat.id}
+                  key={cat.$id}
                   variant="ghost"
                   className="justify-start px-4 py-6 rounded-xl font-bold hover:bg-primary hover:text-primary-foreground transition-all text-sm"
-                  onClick={() => onCategorySelect(cat.id)}
+                  onClick={() => onCategorySelect(cat.slug)}
                 >
                   {cat.name}
                 </Button>
@@ -78,7 +78,7 @@ export function Navbar({
 
         <div className="flex flex-1 items-center justify-center">
           <Image
-            src="https://raw.githubusercontent.com/shuyaib105/ranins-/refs/heads/main/Ranins%20logo%20file.png"
+            src={logo}
             alt="Ranins Logo"
             width={120}
             height={48}

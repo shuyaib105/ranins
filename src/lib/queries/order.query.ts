@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { orderApi, OrderDocument } from "@/lib/api/order";
 import { queryKeys } from "./query-keys";
+import { createOrderAction, updateOrderStatusAction } from "@/app/actions/order";
 
 export type { OrderDocument };
 
@@ -21,7 +22,18 @@ export function useCreateOrder() {
 
   return useMutation({
     mutationFn: async (data: NewOrder) => {
-      return await orderApi.create(data);
+      const payload = {
+        name: data.name,
+        phone: data.phone,
+        products: JSON.parse(data.products),
+        total_amount: data.totalAmount,
+        transaction_id: data.transactionId ?? null,
+        payment_method: data.paymentMethod ?? null,
+        status: data.status,
+      };
+      const result = await createOrderAction(payload);
+      if (result.error) throw new Error(result.error);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.orders.all });
@@ -34,10 +46,13 @@ export function useUpdateOrderStatus() {
 
   return useMutation({
     mutationFn: async ({ id, status }: { id: string; status: "pending" | "verified" }) => {
-      return await orderApi.updateStatus(id, status);
+      const result = await updateOrderStatusAction(id, status);
+      if (result.error) throw new Error(result.error);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.orders.all });
     },
   });
 }
+

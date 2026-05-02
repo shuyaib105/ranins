@@ -1,0 +1,165 @@
+"use client";
+
+import { useState } from "react";
+import { useProducts, useAdminMutations, ProductDocument, NewProduct } from "@/lib/queries/product.query";
+import { useCategories, useCategoryMutations } from "@/lib/queries/category.query";
+import { toast } from "sonner";
+import { createClient } from "@/lib/client";
+import { deleteStorageImage } from "@/lib/utils";
+
+export function useProductManager() {
+  const { data: products, isLoading: productsLoading } = useProducts();
+  const { data: categories, isLoading: categoriesLoading } = useCategories();
+  const { createProduct, updateProduct, deleteProduct } = useAdminMutations();
+  const { createCategory, deleteCategory } = useCategoryMutations();
+  
+  const [isOpen, setIsOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<ProductDocument | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const [formData, setFormData] = useState<NewProduct>({
+    name: "",
+    price: 0,
+    discountPrice: 0,
+    stock: 0,
+    category: "all",
+    image: "",
+  });
+
+  const [catFormData, setCatFormData] = useState({ name: "", slug: "" });
+  const [uploading, setUploading] = useState(false);
+
+  const handleEdit = (product: ProductDocument) => {
+    setEditingProduct(product);
+    setFormData({
+      name: product.name,
+      price: product.price,
+      discountPrice: product.discountPrice || 0,
+      stock: product.stock,
+      category: product.category,
+      image: product.image ?? "",
+    });
+    setIsOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!deletingId) return;
+    try {
+      const product = products?.find((p) => p.$id === deletingId);
+      await deleteProduct.mutateAsync(deletingId);
+      if (product?.image) {
+        const supabase = createClient();
+        await deleteStorageImage(supabase, product.image);
+      }
+      toast.success("Product deleted");
+    } catch (_error) {
+      toast.error("Failed to delete product");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const handleCatSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await createCategory.mutateAsync(catFormData);
+      toast.success("Category added");
+      setCatFormData({ name: "", slug: "" });
+    } catch (_error) {
+      toast.error("Failed to add category");
+    }
+  };
+
+  const handleCatDelete = async (id: string) => {
+    try {
+      await deleteCategory.mutateAsync(id);
+      toast.success("Category deleted");
+    } catch (_error) {
+      toast.error("Failed to delete category");
+    }
+  };
+
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const supabase = createClient();
+      const bucket = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET!;
+      const filePath = `${crypto.randomUUID()}_${file.name.replace(/\s+/g, "_")}`;
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from(bucket)
+        .upload(filePath, file as File, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (uploadError) {
+        throw uploadError;
+      }
+      
+      const { data: publicData } = supabase.storage.from(bucket).getPublicUrl(uploadData.path);
+      
+      if (editingProduct?.image) {
+        await deleteStorageImage(supabase, editingProduct.image);
+      }
+      
+      setFormData((prev) => ({ ...prev, image: publicData.publicUrl }));
+      toast.success("Image uploaded");
+    } catch (error: unknown) {
+      console.error("Upload error:", error);
+      const err = error as { message?: string };
+      toast.error(err.message || "Upload failed");
+    } finally {
+
+      setUploading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (editingProduct) {
+        await updateProduct.mutateAsync({ id: editingProduct.$id!, data: formData });
+        toast.success("Product updated");
+      } else {
+        await createProduct.mutateAsync(formData);
+        toast.success("Product created");
+      }
+      setIsOpen(false);
+      setEditingProduct(null);
+      setFormData({ name: "", price: 0, discountPrice: 0, stock: 0, category: "all", image: "" });
+    } catch (_error) {
+      toast.error("Failed to save product");
+    }
+  };
+
+
+  return {
+    products,
+    productsLoading,
+    categories,
+    categoriesLoading,
+    isOpen,
+    setIsOpen,
+    editingProduct,
+    setEditingProduct,
+    deletingId,
+    setDeletingId,
+    formData,
+    setFormData,
+    catFormData,
+    setCatFormData,
+    uploading,
+    handleEdit,
+    handleDelete,
+    handleCatSubmit,
+    handleCatDelete,
+    handleFileUpload,
+    handleSubmit,
+    createCategory,
+  };
+}
