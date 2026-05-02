@@ -14,24 +14,27 @@ export function Hero() {
 
   if (isLoading) {
     return (
-      <section className="container mx-auto max-w-4xl mb-12 px-4">
-        <Skeleton className="w-full aspect-[4/5] sm:aspect-[21/9] rounded-[32px]" />
+      <section className="w-full mb-12">
+        <Skeleton className="w-full aspect-[16/9] sm:aspect-[2.4/1]" />
       </section>
     );
   }
 
   return (
-    <section className="container mx-auto max-w-4xl mb-12 px-4">
-      <div className="relative w-full aspect-[4/5] sm:aspect-[21/9] rounded-[32px] overflow-hidden shadow-2xl border-4 border-white/10 group">
-        <Image
-          src={heroImage}
-          alt="Hero Banner"
-          fill
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
-      </div>
+    <section className="w-full mb-12">
+      <Image
+        src={heroImage}
+        alt="Hero Banner"
+        width={1920}
+        height={800}
+        className="w-full h-auto block"
+        priority
+      />
     </section>
   );
 }
+
+
+
+
+

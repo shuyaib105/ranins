@@ -5,6 +5,7 @@ import { useSettings, useUpdateSettings } from "@/lib/queries/settings.query";
 import { toast } from "sonner";
 import { createClient } from "@/lib/client";
 import { deleteStorageImage } from "@/lib/utils";
+import { uploadOptimizedImage } from "@/lib/api/upload";
 
 export function useSettingsManager() {
   const { data: settings, isLoading } = useSettings();
@@ -34,7 +35,6 @@ export function useSettingsManager() {
     }
   }, [settings]);
 
-
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: "heroImage" | "logo") => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -42,29 +42,19 @@ export function useSettingsManager() {
     setUploading(field);
     try {
       const supabase = createClient();
-      const bucket = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET!;
-      const filePath = `${field}_${crypto.randomUUID()}_${file.name.replace(/\s+/g, "_")}`;
-      
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from(bucket)
-        .upload(filePath, file as File, { upsert: true });
+      const { publicUrl } = await uploadOptimizedImage(supabase, file, field);
 
-      if (uploadError) throw uploadError;
-      
-      const { data: publicData } = supabase.storage.from(bucket).getPublicUrl(uploadData.path);
-      
       const oldUrl = field === "heroImage" ? formData.heroImage : formData.logo;
       if (oldUrl) {
         await deleteStorageImage(supabase, oldUrl);
       }
-      
-      setFormData((prev) => ({ ...prev, [field]: publicData.publicUrl }));
-      toast.success(`${field === "heroImage" ? "Hero image" : "Logo"} uploaded`);
+
+      setFormData((prev) => ({ ...prev, [field]: publicUrl }));
+      toast.success(`${field === "heroImage" ? "Hero image" : "Logo"} optimized and uploaded`);
     } catch (error: unknown) {
       const err = error as { message?: string };
       toast.error(`Upload failed: ${err.message || "Unknown error"}`);
     } finally {
-
       setUploading(null);
     }
   };
@@ -81,7 +71,6 @@ export function useSettingsManager() {
       toast.error("Failed to update settings");
     }
   };
-
 
   return {
     settings,

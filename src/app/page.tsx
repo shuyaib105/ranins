@@ -6,8 +6,8 @@ import { ProductCard } from "@/components/product-card";
 import { CartView } from "@/components/cart-view";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
+
 import {
   Empty,
   EmptyDescription,
@@ -126,22 +126,9 @@ export default function Home() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-
-            <div className="relative">
-              <Button
-                variant="outline"
-                className="h-auto rounded-full border-2 border-border bg-transparent px-6 py-3 text-[10px] font-black uppercase tracking-[1.5px] text-muted-foreground opacity-60 cursor-not-allowed sm:px-6 sm:py-2.5 sm:text-[11px] sm:tracking-[2px]"
-              >
-                Customize T-Shirt
-              </Button>
-              <Badge 
-                className="absolute -top-2 -right-2 z-10 animate-pulse rounded-full border-[1.5px] border-destructive bg-destructive text-[7px] font-900 uppercase tracking-[1px] text-destructive-foreground"
-              >
-                Coming Soon
-              </Badge>
-            </div>
           </div>
         </section>
+
 
         <h2 className="mb-8 border-l-8 border-primary pl-4 text-xl font-bold">
           {categoryName}
@@ -149,6 +136,8 @@ export default function Home() {
 
 
         {loading ? (
+
+
           <div className="flex justify-center py-20">
             <Spinner className="size-10" />
           </div>

@@ -6,6 +6,7 @@ import { useCategories, useCategoryMutations } from "@/lib/queries/category.quer
 import { toast } from "sonner";
 import { createClient } from "@/lib/client";
 import { deleteStorageImage } from "@/lib/utils";
+import { uploadOptimizedImage } from "@/lib/api/upload";
 
 export function useProductManager() {
   const { data: products, isLoading: productsLoading } = useProducts();
@@ -79,7 +80,6 @@ export function useProductManager() {
     }
   };
 
-
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -87,34 +87,19 @@ export function useProductManager() {
     setUploading(true);
     try {
       const supabase = createClient();
-      const bucket = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET!;
-      const filePath = `${crypto.randomUUID()}_${file.name.replace(/\s+/g, "_")}`;
-      
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from(bucket)
-        .upload(filePath, file as File, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+      const { publicUrl } = await uploadOptimizedImage(supabase, file, "product");
 
-      if (uploadError) {
-        throw uploadError;
-      }
-      
-      const { data: publicData } = supabase.storage.from(bucket).getPublicUrl(uploadData.path);
-      
       if (editingProduct?.image) {
         await deleteStorageImage(supabase, editingProduct.image);
       }
-      
-      setFormData((prev) => ({ ...prev, image: publicData.publicUrl }));
-      toast.success("Image uploaded");
+
+      setFormData((prev) => ({ ...prev, image: publicUrl }));
+      toast.success("Image optimized and uploaded");
     } catch (error: unknown) {
       console.error("Upload error:", error);
       const err = error as { message?: string };
       toast.error(err.message || "Upload failed");
     } finally {
-
       setUploading(false);
     }
   };
@@ -136,7 +121,6 @@ export function useProductManager() {
       toast.error("Failed to save product");
     }
   };
-
 
   return {
     products,
