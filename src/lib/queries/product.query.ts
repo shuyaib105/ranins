@@ -29,6 +29,7 @@ export function useAdminMutations() {
         stock: data.stock,
         category: data.category,
         image: data.image || null,
+        is_hidden: data.isHidden ?? false,
       });
       if (result.error) throw new Error(result.error);
       return result;
@@ -46,19 +47,21 @@ export function useAdminMutations() {
       id: string;
       data: Partial<NewProduct>;
     }) => {
-      const payload: Partial<NewProduct> & { discount_price?: number | null } = {};
+      const payload: any = {};
       if (data.name !== undefined) payload.name = data.name;
       if (data.price !== undefined) payload.price = data.price;
       if (data.discountPrice !== undefined) payload.discount_price = data.discountPrice;
       if (data.stock !== undefined) payload.stock = data.stock;
       if (data.category !== undefined) payload.category = data.category;
       if (data.image !== undefined) payload.image = data.image;
+      if (data.isHidden !== undefined) payload.is_hidden = data.isHidden;
 
       const result = await updateProductAction(id, payload);
 
       if (result.error) throw new Error(result.error);
       return result;
     },
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
     },

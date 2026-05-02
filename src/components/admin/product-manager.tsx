@@ -20,9 +20,9 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
-import { Plus, Pencil, Trash2, ImageIcon, FolderPlus } from "lucide-react";
+import { Plus, Pencil, Trash2, ImageIcon, FolderPlus, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
-import { getPublicImageUrl } from "@/lib/utils";
+import { getPublicImageUrl, cn } from "@/lib/utils";
 import { useProductManager } from "@/hooks/use-product-manager";
 import { ProductDocument } from "@/lib/queries/product.query";
 
@@ -50,16 +50,43 @@ export function ProductManager() {
     handleFileUpload,
     handleSubmit,
     createCategory,
+    adminCategoryFilter,
+    setAdminCategoryFilter,
+    toggleVisibility,
   } = useProductManager();
 
   return (
     <div className="flex flex-col gap-8">
       <Tabs defaultValue="products" className="w-full">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-          <TabsList className="bg-muted/50 p-1 rounded-full border border-border/50">
-            <TabsTrigger value="products" className="rounded-full px-8 font-black uppercase tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-sm">Products</TabsTrigger>
-            <TabsTrigger value="categories" className="rounded-full px-8 font-black uppercase tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-sm">Categories</TabsTrigger>
-          </TabsList>
+          <div className="flex flex-col gap-4">
+            <TabsList className="bg-muted/50 p-1 rounded-full border border-border/50">
+              <TabsTrigger value="products" className="rounded-full px-8 font-black uppercase tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-sm">Products</TabsTrigger>
+              <TabsTrigger value="categories" className="rounded-full px-8 font-black uppercase tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-sm">Categories</TabsTrigger>
+            </TabsList>
+            
+            <div className="flex flex-wrap gap-2">
+              <Button 
+                variant={adminCategoryFilter === 'all' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setAdminCategoryFilter('all')}
+                className="rounded-full text-[10px] font-black uppercase px-4"
+              >
+                All Products
+              </Button>
+              {categories?.map(cat => (
+                <Button 
+                  key={cat.$id}
+                  variant={adminCategoryFilter === cat.slug ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setAdminCategoryFilter(cat.slug)}
+                  className="rounded-full text-[10px] font-black uppercase px-4"
+                >
+                  {cat.name}
+                </Button>
+              ))}
+            </div>
+          </div>
 
           <Button onClick={() => setIsOpen(true)} className="rounded-full font-black uppercase tracking-wider">
             <Plus data-icon="inline-start" /> Add Product
@@ -77,12 +104,12 @@ export function ProductManager() {
                     <TableHead className="font-black uppercase text-[11px] tracking-widest text-muted-foreground">Category</TableHead>
                     <TableHead className="font-black uppercase text-[11px] tracking-widest text-muted-foreground text-right">Price</TableHead>
                     <TableHead className="font-black uppercase text-[11px] tracking-widest text-muted-foreground text-right">Stock</TableHead>
-                    <TableHead className="w-[100px] text-right font-black uppercase text-[11px] tracking-widest text-muted-foreground">Actions</TableHead>
+                    <TableHead className="w-[120px] text-right font-black uppercase text-[11px] tracking-widest text-muted-foreground">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {products?.map((product: ProductDocument) => (
-                    <TableRow key={product.$id} className="border-border group">
+                    <TableRow key={product.$id} className={cn("border-border group transition-opacity", product.isHidden && "opacity-50")}>
                       <TableCell>
                         <div className="relative h-16 w-12 overflow-hidden rounded-xl">
                           {product.image ? (
@@ -95,7 +122,10 @@ export function ProductManager() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="font-bold">{product.name}</div>
+                        <div className="font-bold flex items-center gap-2">
+                          {product.name}
+                          {product.isHidden && <Badge variant="outline" className="text-[8px] font-black uppercase">Hidden</Badge>}
+                        </div>
                         <div className="text-[10px] text-muted-foreground font-mono">#{product.$id}</div>
                       </TableCell>
                       <TableCell>
@@ -112,8 +142,17 @@ export function ProductManager() {
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button variant="ghost" size="icon" className="size-8 rounded-full" onClick={() => handleEdit(product)}>
+                        <div className="flex justify-end gap-1">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="size-8 rounded-full" 
+                            onClick={() => toggleVisibility(product)}
+                            title={product.isHidden ? "Show Product" : "Hide Product"}
+                          >
+                            {product.isHidden ? <EyeOff className="size-4 text-orange-500" /> : <Eye className="size-4 text-blue-500" />}
+                          </Button>
+                          <Button variant="ghost" size="icon" className="size-8 rounded-full" onClick={() => handleEdit(product)} title="Edit Product">
                             <Pencil className="size-4" />
                           </Button>
                           <Button 
@@ -121,6 +160,7 @@ export function ProductManager() {
                             size="icon" 
                             className="size-8 rounded-full text-destructive hover:text-destructive hover:bg-destructive/5" 
                             onClick={() => setDeletingId(product.$id!)}
+                            title="Delete Product"
                           >
                             <Trash2 className="size-4" />
                           </Button>
@@ -208,7 +248,7 @@ export function ProductManager() {
         setIsOpen(open);
         if (!open) {
           setEditingProduct(null);
-          setFormData({ name: "", price: 0, discountPrice: 0, stock: 0, category: "all", image: "" });
+          setFormData({ name: "", price: 0, discountPrice: 0, stock: 0, category: "all", image: "", isHidden: false });
         }
       }}>
         <DialogContent className="max-w-2xl rounded-[32px]">

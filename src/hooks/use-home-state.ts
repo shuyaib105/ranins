@@ -29,15 +29,17 @@ export function useHomeState() {
   }, []);
 
 
-  const products: Product[] = (appwriteProducts || []).map((p: ProductDocument) => ({
-    id: p.$id!,
-    name: p.name,
-    originalPrice: p.discountPrice ? p.price : 0,
-    price: p.discountPrice || p.price,
-    cat: p.category || "all",
-    isNew: mounted ? (p.$createdAt ? new Date(p.$createdAt).getTime() > now - 7 * 24 * 60 * 60 * 1000 : false) : false,
-    img: p.image ?? "",
-  })) || [];
+  const products: Product[] = (appwriteProducts || [])
+    .filter((p: ProductDocument) => !p.isHidden)
+    .map((p: ProductDocument) => ({
+      id: p.$id!,
+      name: p.name,
+      originalPrice: p.discountPrice ? p.price : 0,
+      price: p.discountPrice || p.price,
+      cat: p.category || "all",
+      isNew: mounted ? (p.$createdAt ? new Date(p.$createdAt).getTime() > now - 7 * 24 * 60 * 60 * 1000 : false) : false,
+      img: p.image ?? "",
+    })) || [];
 
   const filteredProducts = products.filter((p) => {
     const matchCat = currentFilter === "all" || p.cat === currentFilter;

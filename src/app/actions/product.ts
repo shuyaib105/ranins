@@ -11,6 +11,7 @@ const productSchema = z.object({
   stock: z.number().int().min(0),
   category: z.string().min(1),
   image: z.string().nullable().optional(),
+  is_hidden: z.boolean().default(false),
 });
 
 export async function createProductAction(data: z.infer<typeof productSchema>) {
@@ -23,6 +24,7 @@ export async function createProductAction(data: z.infer<typeof productSchema>) {
   const { error } = await supabase.from("products").insert([validated.data]);
   if (error) return { error: error.message };
   revalidatePath("/admin");
+  revalidatePath("/");
   return { success: true };
 }
 
@@ -36,6 +38,7 @@ export async function updateProductAction(id: string, data: Partial<z.infer<type
   const { error } = await supabase.from("products").update(validated.data).eq("id", id);
   if (error) return { error: error.message };
   revalidatePath("/admin");
+  revalidatePath("/");
   return { success: true };
 }
 

@@ -9,6 +9,7 @@ export interface ProductDocument {
   stock: number;
   category: string;
   image?: string;
+  isHidden?: boolean;
 }
 
 type ProductRow = {
@@ -19,6 +20,7 @@ type ProductRow = {
   stock: number;
   category: string;
   image?: string | null;
+  is_hidden: boolean;
   created_at: string;
 };
 
@@ -27,7 +29,7 @@ type NewProduct = Omit<ProductDocument, "$id" | "$createdAt">;
 export const productApi = {
   list: async (): Promise<{ documents: ProductDocument[] }> => {
     const supabase = createClient();
-    const { data, error } = await supabase.from("products").select("*");
+    const { data, error } = await supabase.from("products").select("*").order("created_at", { ascending: false });
     const rows = data as ProductRow[] | null;
     if (error) throw error;
     const docs: ProductDocument[] = (rows || []).map((r) => ({
@@ -39,6 +41,7 @@ export const productApi = {
       stock: r.stock,
       category: r.category,
       image: r.image ?? undefined,
+      isHidden: r.is_hidden,
     }));
     return { documents: docs };
   },
@@ -51,6 +54,7 @@ export const productApi = {
       stock: data.stock,
       category: data.category,
       image: data.image ?? null,
+      is_hidden: data.isHidden ?? false,
     };
     const { data: inserted, error } = await supabase.from("products").insert([payload]).select().single();
     const ins = inserted as ProductRow | null;
@@ -64,6 +68,7 @@ export const productApi = {
       stock: ins!.stock,
       category: ins!.category,
       image: ins!.image ?? undefined,
+      isHidden: ins!.is_hidden,
     } as ProductDocument;
   },
   update: async (id: string, data_: Partial<NewProduct>) => {
@@ -75,6 +80,7 @@ export const productApi = {
     if (data_.stock !== undefined) payload.stock = data_.stock as number;
     if (data_.category !== undefined) payload.category = data_.category;
     if (data_.image !== undefined) payload.image = data_.image ?? null;
+    if (data_.isHidden !== undefined) payload.is_hidden = data_.isHidden;
     const { data: updated, error } = await supabase.from("products").update(payload).eq("id", id).select().single();
     const up = updated as ProductRow;
     if (error) throw error;
@@ -87,6 +93,7 @@ export const productApi = {
       stock: up.stock,
       category: up.category,
       image: up.image ?? undefined,
+      isHidden: up.is_hidden,
     } as ProductDocument;
   },
   delete: async (id: string) => {

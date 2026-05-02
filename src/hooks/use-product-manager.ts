@@ -9,7 +9,7 @@ import { deleteStorageImage } from "@/lib/utils";
 import { uploadOptimizedImage } from "@/lib/api/upload";
 
 export function useProductManager() {
-  const { data: products, isLoading: productsLoading } = useProducts();
+  const { data: allProducts, isLoading: productsLoading } = useProducts();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
   const { createProduct, updateProduct, deleteProduct } = useAdminMutations();
   const { createCategory, deleteCategory } = useCategoryMutations();
@@ -17,6 +17,7 @@ export function useProductManager() {
   const [isOpen, setIsOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductDocument | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [adminCategoryFilter, setAdminCategoryFilter] = useState<string>("all");
 
   const [formData, setFormData] = useState<NewProduct>({
     name: "",
@@ -25,10 +26,15 @@ export function useProductManager() {
     stock: 0,
     category: "all",
     image: "",
+    isHidden: false,
   });
 
   const [catFormData, setCatFormData] = useState({ name: "", slug: "" });
   const [uploading, setUploading] = useState(false);
+
+  const products = allProducts?.filter(p => 
+    adminCategoryFilter === "all" || p.category === adminCategoryFilter
+  );
 
   const handleEdit = (product: ProductDocument) => {
     setEditingProduct(product);
@@ -39,8 +45,21 @@ export function useProductManager() {
       stock: product.stock,
       category: product.category,
       image: product.image ?? "",
+      isHidden: product.isHidden ?? false,
     });
     setIsOpen(true);
+  };
+
+  const toggleVisibility = async (product: ProductDocument) => {
+    try {
+      await updateProduct.mutateAsync({ 
+        id: product.$id!, 
+        data: { isHidden: !product.isHidden } 
+      });
+      toast.success(product.isHidden ? "Product visible" : "Product hidden");
+    } catch (_error) {
+      toast.error("Failed to update visibility");
+    }
   };
 
   const handleDelete = async () => {
@@ -145,5 +164,8 @@ export function useProductManager() {
     handleFileUpload,
     handleSubmit,
     createCategory,
+    adminCategoryFilter,
+    setAdminCategoryFilter,
+    toggleVisibility,
   };
 }
