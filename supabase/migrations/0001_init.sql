@@ -50,6 +50,28 @@ create table if not exists categories (
   created_at timestamptz not null default now()
 );
 
+-- Enable RLS
+alter table products enable row level security;
+alter table categories enable row level security;
+alter table orders enable row level security;
+alter table settings enable row level security;
+
+-- Products Policies
+create policy "Allow public read products" on products for select using (true);
+create policy "Allow authenticated all products" on products for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
+
+-- Categories Policies
+create policy "Allow public read categories" on categories for select using (true);
+create policy "Allow authenticated all categories" on categories for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
+
+-- Orders Policies
+create policy "Allow public insert orders" on orders for insert with check (true);
+create policy "Allow authenticated all orders" on orders for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
+
+-- Settings Policies
+create policy "Allow public read settings" on settings for select using (true);
+create policy "Allow authenticated all settings" on settings for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
+
 -- Seed initial categories
 insert into categories (name, slug) values 
 ('Exclusive', 'all'),

@@ -19,7 +19,7 @@ export const categoryApi = {
     const supabase = createClient();
     const { data, error } = await supabase.from("categories").select("*").order("name");
     if (error) throw error;
-    const rows = data as CategoryRow[];
+    const rows = (data || []) as CategoryRow[];
     return rows.map((r) => ({
       $id: r.id,
       name: r.name,
